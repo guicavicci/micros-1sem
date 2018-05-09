@@ -1,0 +1,38 @@
+ 1 - Um determinado sensor após habilitado somente completa o envio
+  da informação solicitada após 250ms de seu acionamento. 
+  Implemente uma sub-rotina que efetue o acionamento do sensor, 
+  aguarde a informação ser recebida e sinalize o recebimento da 
+  informação acionando o LED ligado ao microcontrolador de 
+  acordo com o circuito abaixo. Considere clock externo igual a 4MHz.
+
+#INCLUDE <P18F452.INC>
+
+ORG     0X00
+GOTO    INICIO
+ORG     0X08
+RETFIE
+ORG     0X08
+RETFIE
+ORG     0X18
+RETFIE
+
+
+INICIO  MOVLW   B'00000001'
+        MOVWF   TRISB
+        BSF     LATB, 1
+        CALL    DEBOUNCE
+        BSF     LATB, 2
+        GOTO    INICIO
+
+DEBOUNCE    MOVLW   .250
+            MOVWF   0X80
+LOOP1       MOVLW   .250
+            MOVWF   0X81
+LOOP2       NOP
+            DECFSZ  0X81
+            GOTO    LOOP2
+            DECFSZ  0X80
+            GOTO    LOOP1
+            RETURN
+            END
+

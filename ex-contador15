@@ -1,0 +1,40 @@
+- Contador Modulo 15
+- RB3 ENTRADA
+- D SAIDA
+
+#INCLUDE <P18F452.INC>
+
+
+ORG     0X00
+GOTO    INICIO
+ORG     0X08
+RETFIE
+ORG     0X18
+RETFIE
+
+;DEFINIR ENTRADAS
+INICIO  MOVLW      B'00000001'
+        MOVWF      TRISB
+        MOVLWF      B'00000000'
+        MOVWF      TRISD
+
+VER_BOTAO   BTFSC   PORTB, 3
+            GOTO    VER_BOTAO
+            CALL    DEBOUNCE
+            BTFSC   PORTB, 3
+            GOTO    VER_BOTAO
+            MOVLW   .14
+            CPFSEQ  LATD
+            GOTO    INCREMENTA
+            CLRF    LATD
+            GOTO    PRESO
+            
+INCREMENTA  INCF    LATD, 1
+            GOTO    PRESO
+
+
+PRESO       BTFSS   PORTB, 3
+            GOTO    PRESO
+            GOTO    VER_BOTAO
+
+
